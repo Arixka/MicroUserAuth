@@ -1,0 +1,59 @@
+go install github.com/gin-gonic/gin@latest
+go mod init github.com/microservices/microUserAuth
+
+go get -u github.com/gin-gonic/gin
+
+
+----------------------------- Clean Architecture ------------------------- 
+/microUserAuth
+  /cmd
+    /microUserAuth
+      main.go
+  /internal
+    /app
+      /controller
+        user_controller.go
+      /middleware
+        auth_middleware.go
+      /router
+        router.go
+    /domain
+      /entity
+        user.go
+      /repository
+        user_repository.go
+      /service
+        user_service.go
+    /infrastructure
+      /database
+        database.go
+      /repository
+        user_repository_impl.go
+    /usecase
+      user_usecase.go
+  /pkg
+    /config
+      config.go
+    /utils
+      helper.go
+  go.mod
+  go.sum
+  Dockerfile
+  .env
+  README.md
+  
+    cmd/microUserAuth/main.go: Punto de entrada principal de tu aplicación. Aquí inicializas y configuras el servidor y sus dependencias.
+    internal/app: Contiene la lógica específica de la aplicación, como controladores, middleware y enrutamiento.
+        controller: Controladores que manejan las solicitudes HTTP y responden a ellas.
+        middleware: Cualquier middleware, como autenticación o logging.
+        router: Configuración de las rutas HTTP y su asignación a controladores.
+    internal/domain: Contiene la lógica de negocio y los modelos de tu aplicación.
+        entity: Define las entidades o modelos de tu dominio.
+        repository: Interfaces para los métodos de acceso a datos.
+        service: Servicios que contienen la lógica de negocio.
+    internal/infrastructure: Implementaciones específicas como la base de datos y otras integraciones.
+        database: Configuración y conexión a la base de datos.
+        repository: Implementaciones concretas de las interfaces del repositorio.
+    internal/usecase: Casos de uso que coordinan la lógica de negocio y la lógica de la aplicación.
+    pkg/config: Configuración global de la aplicación.
+    pkg/utils: Código de utilidad reusable.
