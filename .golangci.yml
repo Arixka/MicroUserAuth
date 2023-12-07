@@ -1,0 +1,14 @@
+linters-settings:
+  govet:
+    check-shadowing: true
+
+linters:
+  enable:
+    - govet
+    - goimports
+    - golint
+  disable:
+    - errcheck
+
+run:
+  timeout: 5m

@@ -1,0 +1,4 @@
+// Controladores para manejar las solicitudes HTTP. Esto incluye analizar los datos de la solicitud, validarlos y enviar respuestas HTTP.
+// Punto de Entrada a la Lógica de la Aplicación: Actúa como el punto de entrada para las operaciones relacionadas con usuarios en la API. Convierte los datos de las solicitudes en un formato que la lógica de negocio puede entender y utiliza.
+// Transformación de Datos: Puede involucrar transformar datos de la solicitud en estructuras o formatos requeridos por la lógica de negocio.
+// Manejo de Respuestas: Formatea y devuelve las respuestas adecuadas y códigos de estado HTTP al cliente.
