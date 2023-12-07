@@ -8,6 +8,7 @@ services:
       - db
     environment:
       - DB_HOST=db
+      - DB_PORT=${POSTGRES_PORT}
       - DB_USER=${POSTGRES_USER}
       - DB_PASSWORD=${POSTGRES_PASSWORD}
       - DB_NAME=${POSTGRES_DB}
@@ -18,7 +19,7 @@ services:
   db:
     image: postgres
     ports:
-      - "5432:5432"
+      - "{POSTGRES_PORT}:{POSTGRES_PORT}"
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
