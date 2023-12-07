@@ -30,4 +30,4 @@ COPY --from=build_base /app/out/microUserAuth /app/microUserAuth
 EXPOSE 8080
 
 # Comando para ejecutar tu aplicación
-CMD ["/app/microUserAuth"]
+ENTRYPOINT ["/app/microUserAuth"]
