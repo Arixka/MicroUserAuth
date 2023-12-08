@@ -1,3 +1,5 @@
-// controladores
+package handlers
 
+func NewUser() {
 
+}
