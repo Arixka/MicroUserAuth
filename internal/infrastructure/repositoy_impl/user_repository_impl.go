@@ -1,4 +1,4 @@
-package repositoyimpl
+package repositoryimpl
 
 import (
 	domain "github.com/microservices/microUserAuth/internal/domain/user"
