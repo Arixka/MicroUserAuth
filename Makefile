@@ -15,3 +15,6 @@ run-docker: build-docker
 
 down-docker:
 	docker-compose down --remove-orphans
+
+docker-logs:
+	docker logs [CONTAINER_ID_OR_NAME]
