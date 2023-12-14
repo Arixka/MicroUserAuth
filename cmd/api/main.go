@@ -6,6 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/microservices/microUserAuth/internal/infrastructure/database"
 	repositoryimpl "github.com/microservices/microUserAuth/internal/infrastructure/repositoy_impl"
+	"github.com/microservices/microUserAuth/internal/interface/handlers"
+	"github.com/microservices/microUserAuth/internal/usecase/service"
 )
 
 func main() {
@@ -16,15 +18,13 @@ func main() {
     }
 
     userRepo := repositoryimpl.NewUserRepository(db)
+	userService := service.NewUserService(userRepo)
 
-    router := gin.Default()
-    router.GET("/", func(c *gin.Context) {
-        c.JSON(200, gin.H{
-            "message": "Bienvenido a microUserAuth",
-        })
-    })
+	router := gin.Default()
+
+	userHandler := handlers.NewUserHandler(userService)
     
-
+	router.POST("/users", userHandler.Register)
 
     //Iniciar el servidor, si error es nil todo bien, sino es nil salta el log
     if err := router.Run(":8080"); err != nil {

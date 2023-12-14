@@ -8,7 +8,7 @@ import (
 type userRepositoryImpl struct {
 	db *gorm.DB
 }
-//
+
 func NewUserRepository(db *gorm.DB) domain.UserRepository {
     return &userRepositoryImpl{db: db}
 }
