@@ -7,11 +7,11 @@ run:
 test:
 	go test -v ./test/...
 
-build-docker: build
-	docker build . -t api-rest
+build-docker:
+	docker-compose build
 
-run-docker: build-docker
-	docker run -p 3000:3000 api-rest+
+run-docker:
+	docker-compose up
 
 down-docker:
 	docker-compose down --remove-orphans

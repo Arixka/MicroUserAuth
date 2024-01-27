@@ -6,11 +6,13 @@ import (
 	"github.com/microservices/microUserAuth/internal/usecase/service"
 )
 
-func newRouter(userService service.UserService) *gin.Engine{
+func newRouter(userService service.UserService, authService service.AuthService) *gin.Engine{
 	router := gin.Default()
 	
 	userHandler := handlers.NewUserHandler(userService)
-	router.POST("/users", userHandler.Register)
+	authHandler := handlers.NewAuthHandler(authService)
 
+	router.POST("/users", userHandler.Register)
+	router.POST("/login", authHandler.Login)
 	return router
 }

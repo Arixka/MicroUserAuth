@@ -12,22 +12,25 @@ import (
 
 func main() {
 
-    db, err := database.Connect()
-    if err != nil {
-        log.Fatalf("Could not establish connection to the database: %v", err)
-    }
+	db, err := database.Connect()
+	if err != nil {
+		log.Fatalf("Could not establish connection to the database: %v", err)
+	}
 
-    userRepo := repositoryimpl.NewUserRepository(db)
+	userRepo := repositoryimpl.NewUserRepository(db)
 	userService := service.NewUserService(userRepo)
+	authService := service.NewAuthService(userRepo)
 
 	router := gin.Default()
 
 	userHandler := handlers.NewUserHandler(userService)
-    
-	router.POST("/users", userHandler.Register)
+	authHandler := handlers.NewAuthHandler(authService)
 
-    //Iniciar el servidor, si error es nil todo bien, sino es nil salta el log
-    if err := router.Run(":8080"); err != nil {
-        log.Fatalf("Error starting server: %v", err)
-    }
+	router.POST("/users", userHandler.Register)
+	router.POST("/login", authHandler.Login)
+
+	//Iniciar el servidor, si error es nil todo bien, sino es nil salta el log
+	if err := router.Run(":8080"); err != nil {
+		log.Fatalf("Error starting server: %v", err)
+	}
 }
