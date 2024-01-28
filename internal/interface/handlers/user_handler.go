@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -25,14 +26,14 @@ func (h *UserHandler) Register(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
+	log.Printf("Entramos en Register  newUser '%+v':", newUser)
+	log.Printf("Entramos en Register  newUser.Password '%+v':", newUser.Password)
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al hashear la contraseña"})
 		return
 	}
 	newUser.Password = string(hashedPassword)
-
 	createdUser, err := h.userService.CreateUser(newUser)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

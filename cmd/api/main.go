@@ -40,6 +40,7 @@ func main() {
 	router.POST("/users", userHandler.Register)
 	router.POST("/login", authHandler.Login)
 
+	log.Printf("************************************************************\n********************************************************************************")
 	//Iniciar el servidor, si error es nil todo bien, sino es nil salta el log
 	if err := router.Run(":8080"); err != nil {
 		log.Fatalf("Error starting server: %v", err)

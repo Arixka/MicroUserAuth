@@ -19,6 +19,7 @@ func NewUserRepository(db *gorm.DB) domain.UserRepository {
 
 func (repo *userRepositoryImpl) CreateUser(user domain.User) (*domain.User, error) {
 	result := repo.db.Create(&user)
+	log.Printf("Metodo CreateUser")
 	if result.Error != nil {
 		return nil, result.Error
 	}

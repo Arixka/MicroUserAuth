@@ -1,6 +1,11 @@
 build:
 	go build -o ./out/microUserAuth ./cmd/api/main.go
 
+run:
+	go build -o ./out/microUserAuth ./cmd/api/main.go
+	copy .env.local .env
+	.\out\microUserAuth
+
 run-local:
 	copy .env.local .env
 	go run ./cmd/api/main.go

@@ -31,22 +31,26 @@ func NewAuthService(userRepo domain.UserRepository) AuthService {
 func (s *authServiceImpl) Login(username, password string) (*domain.User, error) {
 	// Implementa la lógica de inicio de sesión aquí
 	user, err := s.userRepo.FindByUsername(username)
-	log.Printf("Error al buscar el usuario '%s': %v", username, err)
 	if err != nil {
+		log.Printf("Error al buscar el usuario '%s': %v", username, err)
 		return nil, err
 	}
 	// Verifica la contraseña (asegúrate de que esté hasheada)
 	if !s.checkPasswordHash(password, user.Password) {
 		return nil, ErrInvalidCredentials
 	}
-
 	return user, nil
 }
 
 // checkPasswordHash compara una contraseña con un hash y devuelve si son iguales
 func (s *authServiceImpl) checkPasswordHash(password, hashedPassword string) bool {
+	log.Printf("Metodo checkPasswordHash '%s': %v", password, hashedPassword)
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
-	return err == nil
+	if err != nil {
+		log.Printf("Error al verificar la contraseña: %v", err)
+		return false
+	}
+	return true
 }
 
 // Encapsula la logica de negocio
