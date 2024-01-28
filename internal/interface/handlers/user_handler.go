@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	domain "github.com/microservices/microUserAuth/internal/domain/user"
 	"github.com/microservices/microUserAuth/internal/usecase/service"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserHandler struct {
@@ -25,12 +26,20 @@ func (h *UserHandler) Register(c *gin.Context) {
 		return
 	}
 
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al hashear la contraseña"})
+		return
+	}
+	newUser.Password = string(hashedPassword)
+
 	createdUser, err := h.userService.CreateUser(newUser)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
+	// Omitir la contraseña en la respuesta
+	createdUser.Password = ""
 	c.JSON(http.StatusCreated, createdUser)
 }
 

@@ -3,6 +3,7 @@ package service
 // Importar los paquetes necesarios
 import (
 	"errors"
+	"log"
 
 	domain "github.com/microservices/microUserAuth/internal/domain/user"
 	"golang.org/x/crypto/bcrypt"
@@ -30,6 +31,7 @@ func NewAuthService(userRepo domain.UserRepository) AuthService {
 func (s *authServiceImpl) Login(username, password string) (*domain.User, error) {
 	// Implementa la lógica de inicio de sesión aquí
 	user, err := s.userRepo.FindByUsername(username)
+	log.Printf("Error al buscar el usuario '%s': %v", username, err)
 	if err != nil {
 		return nil, err
 	}

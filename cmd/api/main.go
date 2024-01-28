@@ -2,8 +2,10 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/microservices/microUserAuth/internal/infrastructure/database"
 	repositoryimpl "github.com/microservices/microUserAuth/internal/infrastructure/repositoy_impl"
 	"github.com/microservices/microUserAuth/internal/interface/handlers"
@@ -11,6 +13,15 @@ import (
 )
 
 func main() {
+
+	envFile := ".env.local"
+	if os.Getenv("DOCKER_ENV") == "true" {
+		envFile = ".env.docker"
+	}
+
+	if err := godotenv.Load(envFile); err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
 	db, err := database.Connect()
 	if err != nil {

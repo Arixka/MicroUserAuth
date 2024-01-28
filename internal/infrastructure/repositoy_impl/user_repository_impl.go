@@ -1,6 +1,9 @@
 package repositoryimpl
 
 import (
+	"errors"
+	"log"
+
 	domain "github.com/microservices/microUserAuth/internal/domain/user"
 	"gorm.io/gorm"
 )
@@ -24,11 +27,17 @@ func (repo *userRepositoryImpl) CreateUser(user domain.User) (*domain.User, erro
 
 // FindByUsername busca un usuario por su nombre de usuario
 func (repo *userRepositoryImpl) FindByUsername(username string) (*domain.User, error) {
-	var u domain.User
-	if err := repo.db.Where("username = ?", username).First(&u).Error; err != nil {
-		// Manejar error, por ejemplo, si no se encuentra el usuario
+	u := &domain.User{}
+	log.Printf("Entramos en FindByUsername '%s':", username)
+	if err := repo.db.Where("username = ?", username).First(u).Error; err != nil {
+		log.Printf("Error al buscar el usuario '%s': %v", username, err)
 		return nil, err
 	}
+	if u == nil {
+		log.Printf("No se encontró el usuario '%s'", username)
+		return nil, errors.New("User not found")
+	}
 	//Si un usuario es encontrado, se devuelve un puntero a la instancia del usuario (&u),
-	return &u, nil
+	log.Printf("Usuario encontrado: %v", u)
+	return u, nil
 }

@@ -1,2 +1,4 @@
 .env
 Proyecto_Recuerda.txt
+.env.local
+.env.docker
