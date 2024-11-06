@@ -4,21 +4,23 @@ package service
 import (
 	"errors"
 	"log"
+	"os"
+	"time"
 
+	"github.com/golang-jwt/jwt/v4"
 	domain "github.com/microservices/microUserAuth/internal/domain/user"
 	"golang.org/x/crypto/bcrypt"
 )
 
-// ErrInvalidCredentials se utiliza cuando un intento de login tiene credenciales inválidas
+var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 var ErrInvalidCredentials = errors.New("invalid credentials")
 
 type AuthService interface {
-	Login(username, password string) (*domain.User, error)
+	Login(username, password string) (string, error)
 	// Aquí puedes añadir métodos como Logout, ChangePassword, etc.
 }
 
 type authServiceImpl struct {
-	// Aquí irían las dependencias, como un repositorio de usuarios
 	userRepo domain.UserRepository
 }
 
@@ -28,21 +30,22 @@ func NewAuthService(userRepo domain.UserRepository) AuthService {
 	}
 }
 
-func (s *authServiceImpl) Login(username, password string) (*domain.User, error) {
-	// Implementa la lógica de inicio de sesión aquí
+func (s *authServiceImpl) Login(username, password string) (string, error) {
 	user, err := s.userRepo.FindByUsername(username)
 	if err != nil {
 		log.Printf("Error al buscar el usuario '%s': %v", username, err)
-		return nil, err
+		return "", err
 	}
-	// Verifica la contraseña (asegúrate de que esté hasheada)
 	if !s.checkPasswordHash(password, user.Password) {
-		return nil, ErrInvalidCredentials
+		return "", ErrInvalidCredentials
 	}
-	return user, nil
+	token, err := s.generateToken(user)
+	if err != nil {
+		return "", err
+	}
+	return token, nil
 }
 
-// checkPasswordHash compara una contraseña con un hash y devuelve si son iguales
 func (s *authServiceImpl) checkPasswordHash(password, hashedPassword string) bool {
 	log.Printf("Metodo checkPasswordHash '%s': %v", password, hashedPassword)
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
@@ -51,6 +54,31 @@ func (s *authServiceImpl) checkPasswordHash(password, hashedPassword string) boo
 		return false
 	}
 	return true
+}
+
+type customClaims struct {
+	Id    uint   `json:"id"`
+	Email string `json:"email"`
+	jwt.RegisteredClaims
+}
+
+func (s *authServiceImpl) generateToken(user *domain.User) (string, error) {
+	claims := &customClaims{
+		Id:    user.ID,
+		Email: user.Email,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+		},
+	}
+
+	// Crear el token JWT firmado con HS256
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(jwtKey)
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
 }
 
 // Encapsula la logica de negocio

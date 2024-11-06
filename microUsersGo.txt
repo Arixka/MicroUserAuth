@@ -1,0 +1,139 @@
+go install github.com/gin-gonic/gin@latest
+go mod init github.com/microservices/microUserAuth
+
+go get -u github.com/gin-gonic/gin
+
+- usar un linter
+choco install golangci-lint
+
+- ejecutar golangci-lint
+
+golangci-lint run
+
+Si falla comprobar choco y actualizar
+choco list --local-only
+choco upgrade chocolatey
+
+go mod tidy - elimina modulos que no usamos de nuestro archivo go.sum
+
+***
+
+docker build -t microuserauth . --> crea la imagen y la reconstruye con los nuevos cambios
+docker run -p 8080:8080 microuserauth ---> ejecuta el contenedor
+
+
+docker-compose up - > monta app y base de datos
+
+docker-compose up --build
+
+docker-compose down
+
+docker logs [CONTAINER_ID_OR_NAME]
+
+Definición de Funcionalidades y Requisitos
+
+    Gestión de usuarios (registro, actualización, eliminación)
+    Autenticación de usuarios (inicio de sesión, cierre de sesión)
+    Seguridad y manejo de contraseñas
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------- Flujo de trabajo ---------------------------
+    Inicio: La aplicación se inicia en cmd/microUserAuth.
+    Solicitud HTTP: Una solicitud es recibida y manejada en internal/api/handlers.
+    Casos de Uso: Los datos son procesados en internal/usecase.
+    Lógica de Negocio: Operaciones del dominio en internal/domain/user.
+    Operaciones de Datos: Interacciones con la base de datos en internal/infrastructure/repository.
+    Respuesta: Envío de la respuesta al cliente desde internal/api/handlers.
+    Pruebas: Validación del funcionamiento en tests.
+	
+- maing.go punto de entrada de la aplicacion
+    > Inicializa los componentes de la aplicación (configuración, conexión a base de datos, etc.).
+    > Carga los controladores de la API y configura las rutas.
+
+- api/handlers: Puerta de entrada cuando se recibe una solicitud HTTP, el controlador correspondiente (por ejemplo, user_handler.go para operaciones relacionadas con usuarios) procesa la solicitud.
+    > Parsea y valida los datos de entrada de la solicitud.
+    > Convierte estos datos en un formato que puede ser utilizado por la capa de casos de uso.
+
+- usecase: Aquí es donde se implementan los casos de uso específicos, como crear un usuario o autenticar a un usuario.
+    > Recibe datos de los handlers y ejecuta la lógica de negocio específica.
+    > Interactúa con el domain para operaciones de negocio y con infrastructure para operaciones de datos.
+	
+- domain/user: Define la lógica de negocio y las entidades (modelos) del dominio, como la entidad User.
+    > Contiene la lógica de negocio y las reglas.
+    > Define estructuras y métodos que representan y operan sobre las entidades del negocio.
+
+- infrastructure/repository: implementa la interfaz de repositorio definida en el dominio. Realiza operaciones de la base de datos, como consultas y actualizaciones.
+    > Ejecuta consultas SQL, guarda, recupera y actualiza datos en la base de datos.
+    > Proporciona una capa de abstracción sobre la base de datos.
+
+- internal/api/handlers: Respuesta. Una vez que la lógica de negocio y las operaciones de datos han sido ejecutadas, los resultados son devueltos al controlador.
+
+    > Recibe los resultados de los casos de uso y/o el dominio.
+    > Formatea y envía la respuesta HTTP al cliente (ya sea un resultado exitoso o un manejo de errores). 
+	
+- test
+
+  
+    cmd/microUserAuth/main.go: Punto de entrada principal de tu aplicación. Aquí inicializas y configuras el servidor y sus dependencias.
+    internal/app: Contiene la lógica específica de la aplicación, como controladores, middleware y enrutamiento.
+        controller: Controladores que manejan las solicitudes HTTP y responden a ellas.
+        middleware: Cualquier middleware, como autenticación o logging.
+        router: Configuración de las rutas HTTP y su asignación a controladores.
+    internal/domain: Contiene la lógica de negocio y los modelos de tu aplicación.
+        entity: Define las entidades o modelos de tu dominio.
+        repository: Interfaces para los métodos de acceso a datos.
+        service: Servicios que contienen la lógica de negocio.
+    internal/infrastructure: Implementaciones específicas como la base de datos y otras integraciones.
+        database: Configuración y conexión a la base de datos.
+        repository: Implementaciones concretas de las interfaces del repositorio.
+    internal/usecase: Casos de uso que coordinan la lógica de negocio y la lógica de la aplicación.
+    pkg/config: Configuración global de la aplicación.
+    pkg/utils: Código de utilidad reusable.
+	
+	
+	---------------------------------------------------------------------------
+
+# Etapa de construcción
+FROM golang:1.21.4-alpine AS build_base
+
+# Instala las dependencias necesarias
+RUN apk add --no-cache git gcc g++
+
+# Configura el directorio de trabajo dentro del contenedor
+WORKDIR /tmp
+
+# Copia los archivos go.mod y go.sum y descarga las dependencias
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+
+# Copia el resto del código fuente
+COPY . .
+
+# Compila la aplicación Go
+RUN go build -o ./out/app ./cmd/api/main.go
+
+# Etapa final usando una imagen más pequeña
+FROM alpine:latest
+
+# Instala las dependencias necesarias en el entorno de ejecución
+RUN apk --no-cache add ca-certificates
+
+# Copia el ejecutable compilado desde la etapa de construcción
+COPY --from=build_base /tmp/out/app /app/restapi
+
+# Expone el puerto en el que tu aplicación estará escuchando
+EXPOSE 8080
+
+# Comando para ejecutar tu aplicación
+CMD ["/app/restapi"]

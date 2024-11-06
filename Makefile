@@ -1,6 +1,8 @@
 build:
 	go build -o ./out/microUserAuth ./cmd/api/main.go
 
+run-db:
+	docker-compose up db
 run:
 	go build -o ./out/microUserAuth ./cmd/api/main.go
 	copy .env.local .env
@@ -18,13 +20,10 @@ build-docker:
 
 run-docker:
 	cp .env.docker .env
-	docker-compose up
+	docker-compose up -d
 
 down-docker:
 	docker-compose down --remove-orphans
 
 docker-logs:
 	docker logs [CONTAINER_ID_OR_NAME]
-
-run-db:
-	docker-compose up db

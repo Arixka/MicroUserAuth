@@ -28,7 +28,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 	// Llamada al servicio de autenticación
-	user, err := h.authService.Login(credentials.Username, credentials.Password)
+	token, err := h.authService.Login(credentials.Username, credentials.Password)
 	if err != nil {
 		if errors.Is(err, service.ErrInvalidCredentials) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
@@ -37,8 +37,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		}
 		return
 	}
-	// Enviar respuesta exitosa
-	c.JSON(http.StatusOK, gin.H{"message": "Login successful", "user": user})
+	c.JSON(http.StatusOK, gin.H{"token": token})
 }
 
 // Aquí puedes añadir otros métodos como Logout, ChangePassword, etc.
