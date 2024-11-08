@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,10 +31,11 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	// Llamada al servicio de autenticación
 	token, err := h.authService.Login(credentials.Username, credentials.Password)
 	if err != nil {
+		fmt.Println("Error recibido en Login:", err)
 		if errors.Is(err, service.ErrInvalidCredentials) {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": service.ErrInvalidCredentials.Error()})
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": service.ErrInternalServerError.Error()})
 		}
 		return
 	}

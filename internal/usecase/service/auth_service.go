@@ -14,6 +14,7 @@ import (
 
 var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 var ErrInvalidCredentials = errors.New("invalid credentials")
+var ErrInternalServerError = errors.New("internal server error")
 
 type AuthService interface {
 	Login(username, password string) (string, error)
