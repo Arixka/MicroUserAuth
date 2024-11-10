@@ -13,12 +13,11 @@ build:
 run-db:
 	docker-compose up db
 
-run:
-	go build -o ./out/microUserAuth ./cmd/api/main.go
+run: build
 	$(COPY) .env.local .env
-	./out/microUserAuth
+	./out/microUserAuth.exe
 
-run-local:
+run-local: build
 	$(COPY) .env.local .env
 	go run ./cmd/api/main.go
 
