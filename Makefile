@@ -1,15 +1,25 @@
+
+OS := $(shell uname -s)
+
+ifeq ($(OS), Linux)
+    COPY = cp
+else
+    COPY = copy
+endif
+
 build:
-	go build -o ./out/microUserAuth ./cmd/api/main.go
+	go build -o ./out/microUserAuth.exe ./cmd/api/main.go
 
 run-db:
 	docker-compose up db
+
 run:
 	go build -o ./out/microUserAuth ./cmd/api/main.go
-	copy .env.local .env
-	.\out\microUserAuth
+	$(COPY) .env.local .env
+	./out/microUserAuth
 
 run-local:
-	copy .env.local .env
+	$(COPY) .env.local .env
 	go run ./cmd/api/main.go
 
 test:
@@ -19,7 +29,7 @@ build-docker:
 	docker-compose build
 
 run-docker:
-	cp .env.docker .env
+	$(COPY) .env.docker .env
 	docker-compose up -d
 
 down-docker:
