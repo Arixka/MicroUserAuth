@@ -2,7 +2,8 @@
 # microUserAuth
 
 ## Descripción
-**microUserAuth** es un microservicio en Go diseñado para la autenticación y gestión de usuarios. Este servicio utiliza el framework Gin para crear una API RESTful y PostgreSQL como base de datos, empaquetado en Docker para facilitar su despliegue en entornos de desarrollo y producción. Este proyecto se centra en la seguridad y eficiencia en el manejo de sesiones y contraseñas.
+
+Microservicio en Go diseñado para la autenticación y gestión de usuarios. Este servicio utiliza el framework Gin para crear una API RESTful y PostgreSQL como base de datos, empaquetado en Docker para facilitar su despliegue en entornos de desarrollo y producción. Este proyecto se centra en la seguridad y eficiencia en el manejo de sesiones y contraseñas.
 
 ## Características
 - **Registro de Usuarios**: Permite a los usuarios registrarse con un nombre de usuario y una contraseña segura.
@@ -56,6 +57,15 @@
 
 Este proyecto incluye un `Makefile` con varios comandos para simplificar el proceso de desarrollo y despliegue:
 
+- **Iniciar la base de datos**:
+
+  ```bash
+  #Antes de ejecutar el microservicio en local, asegúrate de que el contenedor 
+  #de la base de datos PostgreSQL esté en funcionamiento. (requerido para `make run-local`)
+
+  make run-db
+  ```
+  
 - **Compilar el binario**:
 
   ```bash
