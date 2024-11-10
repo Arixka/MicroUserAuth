@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/microservices/microUserAuth/internal/infrastructure/database"
+	"github.com/microservices/microUserAuth/internal/infrastructure/middlewares"
 	repositoryimpl "github.com/microservices/microUserAuth/internal/infrastructure/repositoy_impl"
 	"github.com/microservices/microUserAuth/internal/interface/handlers"
 	"github.com/microservices/microUserAuth/internal/usecase/service"
@@ -33,6 +34,7 @@ func main() {
 	authService := service.NewAuthService(userRepo)
 
 	router := gin.Default()
+	router.Use(middlewares.CORS())
 
 	userHandler := handlers.NewUserHandler(userService)
 	authHandler := handlers.NewAuthHandler(authService)
