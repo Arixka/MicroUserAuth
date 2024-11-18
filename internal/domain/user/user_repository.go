@@ -5,5 +5,7 @@ package domain
 type UserRepository interface {
 	CreateUser(user User) (*User, error)
 	FindByUsername(username string) (*User, error)
+	ResetPassword(userID uint, newPassword string) error
+	FindByEmail(email string) (*User, error)
 	//FindUserByID, UpdateUser, DeleteUser, etc.
 }

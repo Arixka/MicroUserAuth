@@ -5,6 +5,7 @@ import (
 	"log"
 
 	domain "github.com/microservices/microUserAuth/internal/domain/user"
+	"github.com/microservices/microUserAuth/internal/usecase/service"
 	"gorm.io/gorm"
 )
 
@@ -31,14 +32,22 @@ func (repo *userRepositoryImpl) FindByUsername(username string) (*domain.User, e
 	u := &domain.User{}
 	log.Printf("Entramos en FindByUsername '%s':", username)
 	if err := repo.db.Where("username = ?", username).First(u).Error; err != nil {
-		log.Printf("Error al buscar el usuario '%s': %v", username, err)
-		return nil, err
-	}
-	if u == nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			log.Printf("Error al buscar el usuario '%s': %v", username, err)
+			return nil, service.ErrInvalidCredentials
+		}
 		log.Printf("No se encontró el usuario '%s'", username)
-		return nil, errors.New("User not found")
+		return nil, err
 	}
 	//Si un usuario es encontrado, se devuelve un puntero a la instancia del usuario (&u),
 	log.Printf("Usuario encontrado: %v", u)
+	return u, nil
+}
+
+func (repo *userRepositoryImpl) ResetPassword(userID uint, newPassword string) error {
+	return nil
+}
+func (repo *userRepositoryImpl) FindByEmail(email string) (*domain.User, error) {
+	u := &domain.User{}
 	return u, nil
 }

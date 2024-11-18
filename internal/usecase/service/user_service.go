@@ -1,8 +1,12 @@
 package service
 
 import (
+	"errors"
+
 	domain "github.com/microservices/microUserAuth/internal/domain/user"
 )
+
+var ErrUserNotFound = errors.New("user not found")
 
 // para crear el servicio necesitamos el modelo y el repository que interactua con la base de datos
 

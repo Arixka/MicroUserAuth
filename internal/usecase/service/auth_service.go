@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -31,10 +32,16 @@ func NewAuthService(userRepo domain.UserRepository) AuthService {
 	}
 }
 
-func (s *authServiceImpl) Login(username, password string) (string, error) {
-	user, err := s.userRepo.FindByUsername(username)
+func (s *authServiceImpl) Login(identifier, password string) (string, error) {
+	var user *domain.User
+	var err error
+	if strings.Contains(identifier, "@") {
+		user, err = s.userRepo.FindByUsername(identifier)
+	} else {
+		user, err = s.userRepo.FindByEmail(identifier)
+	}
 	if err != nil {
-		log.Printf("Error al buscar el usuario '%s': %v", username, err)
+		log.Printf("Error al buscar el usuario '%s': %v", identifier, err)
 		return "", err
 	}
 	if !s.checkPasswordHash(password, user.Password) {
@@ -45,6 +52,10 @@ func (s *authServiceImpl) Login(username, password string) (string, error) {
 		return "", err
 	}
 	return token, nil
+}
+
+func (s *authServiceImpl) ResetPassword(email, password, newPassword string) (string, error) {
+	return "null", nil
 }
 
 func (s *authServiceImpl) checkPasswordHash(password, hashedPassword string) bool {
