@@ -7,7 +7,7 @@ services:
     depends_on:
       - db
     env_file:
-      - .env.docker  
+      - .env
     environment:
       - DB_HOST=db
       - DB_PORT=${DB_PORT}
