@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -15,9 +14,9 @@ import (
 
 func main() {
 
-	envFile := ".env.local"
-	if os.Getenv("DOCKER_ENV") == "true" {
-		envFile = ".env.docker"
+	envFile := ".env"
+	if err := godotenv.Load(envFile); err != nil {
+		log.Fatalf("Error loading .env file")
 	}
 
 	if err := godotenv.Load(envFile); err != nil {
