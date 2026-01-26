@@ -11,14 +11,15 @@ build:
 	go build -o ./out/microUserAuth.exe ./cmd/api/main.go
 
 run-db:
-	docker-compose up db
+	docker start docker_db || docker-compose -f ../../Docker_DB/docker-compose-db.yml up -d
 
 run: build
-	$(COPY) .env.local .env
 	./out/microUserAuth.exe
 
-run-local: build
-	$(COPY) .env.local .env
+dev:# Hot reload (desarrollo)
+	air
+
+run-local: build # Sin reload
 	go run ./cmd/api/main.go
 
 test:
@@ -28,7 +29,6 @@ build-docker:
 	docker-compose build
 
 run-docker:
-	$(COPY) .env.docker .env
 	docker-compose up -d
 
 down-docker:

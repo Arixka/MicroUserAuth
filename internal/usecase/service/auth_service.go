@@ -36,9 +36,11 @@ func (s *authServiceImpl) Login(identifier, password string) (string, error) {
 	var user *domain.User
 	var err error
 	if strings.Contains(identifier, "@") {
-		user, err = s.userRepo.FindByUsername(identifier)
-	} else {
 		user, err = s.userRepo.FindByEmail(identifier)
+		log.Printf("Login con email --> '%s': %v", identifier, user)
+	} else {
+		user, err = s.userRepo.FindByUsername(identifier)
+		log.Printf("Login con usuario --> '%s': %v", identifier, user)
 	}
 	if err != nil {
 		log.Printf("Error al buscar el usuario '%s': %v", identifier, err)
